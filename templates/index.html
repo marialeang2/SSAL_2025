@@ -341,39 +341,10 @@
             showNotification("Error al establecer la temperatura");
           });
       }
+      currentTempDisplay.textContent = targetTemp;
     }
     
-    // Enviar mensaje personalizado
-    function sendCustomCommand() {
-      const message = customMessage.value.trim();
-      
-      if (!message) {
-        showNotification("Por favor ingresa un comando");
-        return;
-      }
-      
-      sendToESP32(message)
-        .then(response => {
-          showResponse(`Enviado: ${response.sent}`);
-          customMessage.value = '';
-        })
-        .catch(err => {
-          showResponse("Error al enviar el comando");
-        });
-    }
     
-    // Simulación de cambio de temperatura (para demostraciones)
-    function simulateTemperatureChanges() {
-      if (isPowerOn && currentTemp < targetTemp) {
-        currentTemp += 1;
-      } else if (isPowerOn && currentTemp > targetTemp) {
-        currentTemp -= 1;
-      } else if (!isPowerOn && currentTemp > 20) {
-        currentTemp -= 1;
-      }
-      
-      currentTempDisplay.textContent = currentTemp;
-    }
     
     // Event listeners
     powerBtn.addEventListener('click', togglePower);
@@ -390,9 +361,6 @@
         tempRange.value = this.value;
       }
     });
-    
-    // Para demostración - simular cambios de temperatura
-    setInterval(simulateTemperatureChanges, 1000);
   </script>
 </body>
 </html>
