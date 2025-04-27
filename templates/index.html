@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Horno SSAL</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+   <style>
+    :root {
+        --primary: #b74e4e;
+        --primary-dark: #933b3b;
+        --secondary: #444;
+        --light: #f5f5f5;
+        --orange: #ff9d2f;
+        --dark-orange: #e07b00;
+      }
+      
+      body {
+        background-color: #f0f0f0;
+        min-height: 100vh;
+        padding: 20px;
+      }
+      
+      .control-panel {
+        max-width: 500px;
+        margin: 0 auto;
+        background: linear-gradient(145deg, var(--primary), var(--primary-dark));
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        padding: 25px;
+        color: white;
+      }
+      
+      .panel-title {
+        text-align: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        font-weight: 700;
+      }
+      
+      .equipment-image {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      
+      .equipment-image img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 5px;
+      }
+      
+      .temperature-display {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      
+      .temperature-range {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+        text-align: center;
+      }
+      
+      .current-temp {
+        font-size: 3rem;
+        font-weight: bold;
+        color: var(--orange);
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        min-width: 120px;
+      }
+      
+      .temp-unit {
+        font-size: 2rem;
+        margin-left: 5px;
+      }
+      
+      .control-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+      }
+      
+      .power-button {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background-color: var(--secondary);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        border: 8px solid #333;
+        transition: all 0.3s ease;
+        position: relative;
+        margin-bottom: 20px;
+      }
+      
+      .power-button::before {
+        content: "";
+        position: absolute;
+        width: 90%;
+        height: 90%;
+        border-radius: 50%;
+        border: 2px dashed rgba(255, 255, 255, 0.2);
+      }
+      
+      .power-icon {
+        font-size: 40px;
+        color: var(--orange);
+        transition: all 0.3s ease;
+      }
+      
+      .power-button:hover {
+        transform: scale(1.05);
+      }
+      
+      .power-button:hover .power-icon {
+        color: var(--dark-orange);
+      }
+      
+      .power-button.active {
+        border-color: var(--orange);
+      }
+      
+      .temperature-input {
+        width: 100%;
+        margin-top: 20px;
+      }
+      
+      .input-group {
+        margin-bottom: 15px;
+      }
+      
+      .notification {
+        padding: 10px;
+        border-radius: 5px;
+        background-color: rgba(0, 0, 0, 0.2);
+        margin-top: 20px;
+        display: none;
+      }
+      
+      .notification.show {
+        display: block;
+      }
+      
+      .temperature-slider {
+        width: 100%;
+        margin: 20px 0;
+      }
+      
+      .form-range::-webkit-slider-thumb {
+        background: var(--orange);
+      }
+      
+      .form-range::-moz-range-thumb {
+        background: var(--orange);
+      }
+      
+      @media (max-width: 576px) {
+        .control-panel {
+          padding: 15px;
+        }
+        
+        .current-temp {
+          font-size: 2.5rem;
+        }
+        
+        .power-button {
+          width: 100px;
+          height: 100px;
+        }
+        
+        .power-icon {
+          font-size: 30px;
+        }
+      }
+
+    </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <div class="control-panel">
+      <h1 class="panel-title">CONTROL DE HORNO SSAL</h1>
+      
+      
+      <div class="temperature-range">
+        Temperatura de Soldado: 30 - 190 °C
+      </div>
+      
+      <div class="temperature-display">
+        <div class="current-temp" id="currentTemp">20</div>
+        <span class="temp-unit">°C</span>
+      </div>
+      
+      <div class="temperature-input">
+        <label for="tempRange" class="form-label text-center d-block">Ajustar temperatura:</label>
+        <input type="range" class="form-range temperature-slider" min="30" max="190" value="20" id="tempRange">
+        
+        <div class="input-group mt-3">
+          <input type="number" class="form-control" placeholder="Temperatura" id="tempInput" min="30" max="190" value="20">
+          <span class="input-group-text">°C</span>
+          <button class="btn btn-warning" id="setTempBtn">Establecer</button>
+        </div>
+      </div>
+      
+      <div class="control-section">
+        <div class="power-button" id="powerBtn">
+          <i class="fas fa-power-off power-icon"></i>
+        </div>
+        <div class="mt-2 text-center">
+          <span id="statusText">Apagado</span>
+        </div>
+      </div>
+      
+      <div class="notification" id="notification">
+        Mensaje enviado correctamente.
+      </div>
+    </div>
+
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Variables globales
+    let isPowerOn = false;
+    let currentTemp = 20;
+    let targetTemp = 20;
+    
+    // Elementos DOM
+    const powerBtn = document.getElementById('powerBtn');
+    const statusText = document.getElementById('statusText');
+    const currentTempDisplay = document.getElementById('currentTemp');
+    const tempRange = document.getElementById('tempRange');
+    const tempInput = document.getElementById('tempInput');
+    const setTempBtn = document.getElementById('setTempBtn');
+    const customMessage = document.getElementById('customMessage');
+    const sendCustomBtn = document.getElementById('sendCustomBtn');
+    const notification = document.getElementById('notification');
+    const responseMessage = document.getElementById('responseMessage');
+    
+    // Función para mostrar notificación
+    function showNotification(message) {
+      notification.textContent = message;
+      notification.classList.add('show');
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+    
+    // Función para mostrar respuesta
+    function showResponse(message) {
+      responseMessage.textContent = message;
+      responseMessage.classList.remove('d-none');
+      setTimeout(() => {
+        responseMessage.classList.add('d-none');
+      }, 5000);
+    }
+    
+    // Función para enviar datos al ESP32
+    async function sendToESP32(data) {
+      try {
+        const res = await fetch("/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ data: data })
+        });
+        
+        const responseData = await res.json();
+        console.log("Respuesta:", responseData);
+        return responseData;
+      } catch (err) {
+        console.error("Error al enviar datos:", err);
+        throw err;
+      }
+    }
+    
+    // Control de temperatura
+    function togglePower() {
+      isPowerOn = !isPowerOn;
+      
+      if (isPowerOn) {
+        powerBtn.classList.add('active');
+        statusText.textContent = 'Encendido';
+        sendToESP32(targetTemp.toString())
+          .then(response => {
+            showNotification(`Horno encendido a ${targetTemp}°C`);
+          })
+          .catch(err => {
+            showNotification("Error al encender el horno");
+            isPowerOn = false;
+            powerBtn.classList.remove('active');
+            statusText.textContent = 'Apagado';
+          });
+      } else {
+        powerBtn.classList.remove('active');
+        statusText.textContent = 'Apagado';
+        sendToESP32("0")
+          .then(response => {
+            showNotification("Horno apagado");
+          })
+          .catch(err => {
+            showNotification("Error al apagar el horno");
+          });
+      }
+    }
+    
+    // Configurar temperatura
+    function setTemperature() {
+      const newTemp = parseInt(tempInput.value);
+      
+      if (isNaN(newTemp) || newTemp < 30 || newTemp > 190) {
+        showNotification("Temperatura inválida. Debe estar entre 30°C y 190°C");
+        tempInput.value = targetTemp;
+        tempRange.value = targetTemp;
+        return;
+      }
+      
+      targetTemp = newTemp;
+      tempRange.value = targetTemp;
+      
+      if (isPowerOn) {
+        sendToESP32(targetTemp.toString())
+          .then(response => {
+            showNotification(`Temperatura establecida a ${targetTemp}°C`);
+          })
+          .catch(err => {
+            showNotification("Error al establecer la temperatura");
+          });
+      }
+    }
+    
+    // Enviar mensaje personalizado
+    function sendCustomCommand() {
+      const message = customMessage.value.trim();
+      
+      if (!message) {
+        showNotification("Por favor ingresa un comando");
+        return;
+      }
+      
+      sendToESP32(message)
+        .then(response => {
+          showResponse(`Enviado: ${response.sent}`);
+          customMessage.value = '';
+        })
+        .catch(err => {
+          showResponse("Error al enviar el comando");
+        });
+    }
+    
+    // Simulación de cambio de temperatura (para demostraciones)
+    function simulateTemperatureChanges() {
+      if (isPowerOn && currentTemp < targetTemp) {
+        currentTemp += 1;
+      } else if (isPowerOn && currentTemp > targetTemp) {
+        currentTemp -= 1;
+      } else if (!isPowerOn && currentTemp > 20) {
+        currentTemp -= 1;
+      }
+      
+      currentTempDisplay.textContent = currentTemp;
+    }
+    
+    // Event listeners
+    powerBtn.addEventListener('click', togglePower);
+    setTempBtn.addEventListener('click', setTemperature);
+    sendCustomBtn.addEventListener('click', sendCustomCommand);
+    
+    tempRange.addEventListener('input', function() {
+      tempInput.value = this.value;
+      targetTemp = parseInt(this.value);
+    });
+    
+    tempInput.addEventListener('input', function() {
+      if (this.value >= 30 && this.value <= 190) {
+        tempRange.value = this.value;
+      }
+    });
+    
+    // Para demostración - simular cambios de temperatura
+    setInterval(simulateTemperatureChanges, 1000);
+  </script>
+</body>
+</html>
