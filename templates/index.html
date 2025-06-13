@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Control de Horno SSAL</title>
   <!-- Bootstrap CSS -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" r>
   <!-- Font Awesome -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel=>
    <style>
     :root {
         --primary: #b74e4e;
@@ -17,13 +17,13 @@
         --orange: #ff9d2f;
         --dark-orange: #e07b00;
       }
-      
+
       body {
         background-color: #f0f0f0;
         min-height: 100vh;
         padding: 20px;
       }
-      
+
       .control-panel {
         max-width: 500px;
         margin: 0 auto;
@@ -41,7 +41,7 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         font-weight: 700;
       }
-      
+
       .equipment-image {
         background-color: #f8f9fa;
         border-radius: 10px;
@@ -49,18 +49,18 @@
         margin-bottom: 20px;
         text-align: center;
       }
-      
+
       .equipment-image img {
         max-width: 100%;
         height: auto;
         border-radius: 5px;
       }
-      
+
       .temperature-display {
         text-align: center;
         margin-bottom: 20px;
       }
-      
+
       .temperature-range {
         font-size: 1.2rem;
         margin-bottom: 15px;
@@ -77,19 +77,19 @@
         border-radius: 10px;
         min-width: 120px;
       }
-      
+
       .temp-unit {
         font-size: 2rem;
         margin-left: 5px;
       }
-      
+
       .control-section {
         display: flex;
         flex-direction: column;
         align-items: center;
         margin-top: 20px;
       }
-      
+
       .power-button {
         width: 120px;
         height: 120px;
@@ -114,30 +114,30 @@
         border-radius: 50%;
         border: 2px dashed rgba(255, 255, 255, 0.2);
       }
-      
+
       .power-icon {
         font-size: 40px;
         color: var(--orange);
         transition: all 0.3s ease;
       }
-      
+
       .power-button:hover {
         transform: scale(1.05);
       }
-      
+
       .power-button:hover .power-icon {
         color: var(--dark-orange);
       }
-      
+
       .power-button.active {
         border-color: var(--orange);
       }
-      
+
       .temperature-input {
         width: 100%;
         margin-top: 20px;
       }
-      
+
       .input-group {
         margin-bottom: 15px;
       }
@@ -192,37 +192,56 @@
   <div class="container mt-4">
     <div class="control-panel">
       <h1 class="panel-title">CONTROL DE HORNO SSAL</h1>
-      
-      
+
+
       <div class="temperature-range">
         Temperatura de Soldado: 30 - 190 °C
       </div>
-      
+
       <div class="temperature-display">
-        <div class="current-temp" id="currentTemp">20</div>
+        <div class="current-temp" id="currentTemp">30</div>
         <span class="temp-unit">°C</span>
       </div>
-      
+
       <div class="temperature-input">
-        <label for="tempRange" class="form-label text-center d-block">Ajustar temperatura:</label>
-        <input type="range" class="form-range temperature-slider" min="30" max="190" value="20" id="tempRange">
-        
+        <label for="tempRange" class="form-label text-center d-block">Ajustar temperatura:</l>
+        <input type="range" class="form-range temperature-slider" min="30" max="190" value="3>
+
         <div class="input-group mt-3">
-          <input type="number" class="form-control" placeholder="Temperatura" id="tempInput" min="30" max="190" value="20">
+          <input type="number" class="form-control" placeholder="Temperatura" id="tempInput" >
           <span class="input-group-text">°C</span>
           <button class="btn btn-warning" id="setTempBtn">Establecer</button>
         </div>
       </div>
-      
-      <div class="control-section">
+
+
+      <div class="control-section text-center">
+          <!-- Botón de Encendido -->
+        <div class="d-flex justify-content-center flex-column align-items-center">
         <div class="power-button" id="powerBtn">
-          <i class="fas fa-power-off power-icon"></i>
+         <i class="fas fa-power-off power-icon"></i>
         </div>
-        <div class="mt-2 text-center">
-          <span id="statusText">Apagado</span>
+        <div class="mt-2">
+         <span id="statusText">Apagado</span>
         </div>
+        </div>
+
+                 <!-- Botón del Ventilador -->
+        <div class="col-6">
+         <div class="fan-button" id="fanBtn">
+         <i class="fas fa-fan fan-icon"></i>
+         </div>
+         <div class="mt-2">
+         <span id="fanStatus">Estado del ventilador: Desconocido</span>
+         </div>
+         </div>
+        </div>
+
+
+      <div class="text-center mb-3">
+        <span class="badge bg-info text-dark" id="last-temp">Esperando datos de temperatura..>
       </div>
-      
+
       <div class="notification" id="notification">
         Mensaje enviado correctamente.
       </div>
@@ -230,15 +249,15 @@
 
 
   <!-- Bootstrap JS Bundle with Popper -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min>
+
   <script>
     // Variables globales
     let isPowerOn = false;
-    let currentTemp = 20;
-    let targetTemp = 20;
-    
-    // Elementos DOM
+    let currentTemp = 30;
+    let targetTemp = 30;
+    let isFanOn = false;
+        // Elementos DOM
     const powerBtn = document.getElementById('powerBtn');
     const statusText = document.getElementById('statusText');
     const currentTempDisplay = document.getElementById('currentTemp');
@@ -249,7 +268,51 @@
     const sendCustomBtn = document.getElementById('sendCustomBtn');
     const notification = document.getElementById('notification');
     const responseMessage = document.getElementById('responseMessage');
-    
+    const fanBtn = document.getElementById('fanBtn');
+    const fanStatusText = document.getElementById('fanStatus');
+
+
+// Función para encender/apagar el ventilador
+function toggleFan() {
+  isFanOn = !isFanOn;
+  const command = isFanOn ? "FAN_ON" : "FAN_OFF";
+
+  sendToESP32(command)
+    .then(response => {
+      showNotification(`Ventilador ${isFanOn ? "encendido" : "apagado"}`);
+      fanStatusText.textContent = `Estado del ventilador: ${isFanOn ? "Encendido" : "Apagado"}`;
+    })
+    .catch(err => {
+      showNotification("Error al cambiar estado del ventilador");
+      isFanOn = !isFanOn; // revertimos el estado
+    });
+}
+
+ // Función para consultar estado actual desde el backend
+        async function updateFanStatus() {
+         try {
+        let res = await fetch("/fan_status");
+        let data = await res.json();
+        if (data.fan) {
+        isFanOn = data.fan.toUpperCase() === "ON";
+        fanStatusText.textContent = `Estado del ventilador: ${isFanOn ? "Encendido" : "Apagado"}`;
+        }
+        } catch (err) {
+        console.error("Error al obtener estado del ventilador:", err);
+        }
+        }
+
+        // Listener del botón
+        fanBtn.addEventListener("click", toggleFan);
+
+        // Actualizamos estado inicial del ventilador
+        document.addEventListener("DOMContentLoaded", () => {
+        updateFanStatus();
+        updateCurrentTemperature();
+        setInterval(updateFanStatus, 3000); // cada 3s
+        setInterval(updateCurrentTemperature, 2000);
+        });
+
     // Función para mostrar notificación
     function showNotification(message) {
       notification.textContent = message;
@@ -258,7 +321,7 @@
         notification.classList.remove('show');
       }, 3000);
     }
-    
+
     // Función para mostrar respuesta
     function showResponse(message) {
       responseMessage.textContent = message;
@@ -267,7 +330,7 @@
         responseMessage.classList.add('d-none');
       }, 5000);
     }
-    
+
     // Función para enviar datos al ESP32
     async function sendToESP32(data) {
       try {
@@ -278,7 +341,7 @@
           },
           body: JSON.stringify({ data: data })
         });
-        
+
         const responseData = await res.json();
         console.log("Respuesta:", responseData);
         return responseData;
@@ -287,11 +350,11 @@
         throw err;
       }
     }
-    
+
     // Control de temperatura
     function togglePower() {
       isPowerOn = !isPowerOn;
-      
+
       if (isPowerOn) {
         powerBtn.classList.add('active');
         statusText.textContent = 'Encendido';
@@ -317,21 +380,21 @@
           });
       }
     }
-    
-    // Configurar temperatura
+
+      // Configurar temperatura
     function setTemperature() {
       const newTemp = parseInt(tempInput.value);
-      
+
       if (isNaN(newTemp) || newTemp < 30 || newTemp > 190) {
         showNotification("Temperatura inválida. Debe estar entre 30°C y 190°C");
         tempInput.value = targetTemp;
         tempRange.value = targetTemp;
         return;
       }
-      
+
       targetTemp = newTemp;
       tempRange.value = targetTemp;
-      
+
       if (isPowerOn) {
         sendToESP32(targetTemp.toString())
           .then(response => {
@@ -343,23 +406,45 @@
       }
       currentTempDisplay.textContent = targetTemp;
     }
-    
-    
-    
-    // Event listeners
+
+       // Event listeners
     powerBtn.addEventListener('click', togglePower);
     setTempBtn.addEventListener('click', setTemperature);
-    sendCustomBtn.addEventListener('click', sendCustomCommand);
-    
+    // sendCustomBtn.addEventListener('click', sendCustomCommand);
+
     tempRange.addEventListener('input', function() {
       tempInput.value = this.value;
       targetTemp = parseInt(this.value);
     });
-    
+
     tempInput.addEventListener('input', function() {
       if (this.value >= 30 && this.value <= 190) {
         tempRange.value = this.value;
       }
+    });
+
+    // Para demostración - simular cambios de temperatura
+    // setInterval(simulateTemperatureChanges, 1000);
+
+    async function updateCurrentTemperature() {
+      try {
+        let res = await fetch("/temperature");
+        let data = await res.json();
+        if (data.temperature) {
+          console.log("Temp actual:", data.temperature);
+          let tempText = `Temperatura actual: ${data.temperature}°C`;
+          document.getElementById("last-temp").textContent = tempText;
+        }
+      } catch (err) {
+        console.error("Error al obtener temperatura actual:", err);
+      }
+    }
+
+    
+    // Actualiza la temperatura cada 2 segundos
+    document.addEventListener("DOMContentLoaded", () => {
+        updateCurrentTemperature();
+        setInterval(updateCurrentTemperature, 2000);
     });
   </script>
 </body>

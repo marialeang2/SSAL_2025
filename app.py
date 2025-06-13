@@ -10,6 +10,7 @@ exchange = 'amq.topic'
 topic = 'esp32'
 
 last_temp_message = None
+last_fan_status = None
 
 app = Flask(__name__)
 CORS(app)
@@ -24,7 +25,7 @@ def send():
     print("Mensaje recibido:", data)
 
     # Enviar a RabbitMQ
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host = rabbit_host, credentials=pika.PlainCr>
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host = rabbit_host, credentials=pika.PlainCredentials(rabbit_user,rabbit_password)))
     channel = connection.channel()
     channel.exchange_declare(exchange=exchange, exchange_type='topic', durable = True)
     queue_name = 'esp32'
@@ -32,8 +33,9 @@ def send():
     channel.queue_bind(exchange=exchange, queue=queue_name, routing_key='esp32')
     channel.basic_publish(exchange=exchange, routing_key=topic, body=data)
     connection.close()
-    return jsonify({"status": "ok", "sent": data})
 
+    return jsonify({"status": "ok", "sent": data})
+                                      
 @app.route("/temperature", methods=["GET"])
 def get_last_temperature():
     global last_temp_message
@@ -43,12 +45,23 @@ def get_last_temperature():
         return jsonify({"temperature": value})
     return jsonify({"temperature": None})
 
+@app.route("/fan_status", methods=["GET"])
+def get_fan_status():
+    global last_fan_status
+    if last_fan_status:
+        status = last_fan_status.replace("FAN:", "").strip()
+        return jsonify({"fan": status})
+    return jsonify({"fan": None})
+
+
 def callback(ch, method, properties, body):
     global last_temp_message
     message = body.decode()
     print("Mensaje recibido del broker:", message)
     if message.startswith("TEMP:"):
         last_temp_message = message
+    elif message.startswith("FAN:"):
+        last_fan_status = message
 
 def start_consumer():
     connection = pika.BlockingConnection(pika.ConnectionParameters(
